@@ -29,21 +29,50 @@ sudo apt-get install trivy -y
 
 
 
-
-# install terraform
-sudo apt install wget -y
-wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update &amp;&amp; sudo apt install terraform
-
-
-
-# install kubernetes (kubectl)
+#kubernetes
+# Step 1: Update package list
 sudo apt update
+
+# Step 2: Install curl (if not already installed)
 sudo apt install curl -y
-curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+
+# Step 3: Download the latest stable version of kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# Step 4: Install kubectl binary to /usr/local/bin
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# (Optional) Clean up downloaded file
+rm kubectl
+
+# Step 5: Verify kubectl installation
 kubectl version --client
+
+
+
+
+
+# terraform
+# 1. Install wget
+sudo apt install wget -y
+
+# 2. Download and add HashiCorp's GPG key
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+  gpg --dearmor | \
+  sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+
+# 3. Add the HashiCorp repository to your sources list
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+# 4. Update and install Terraform
+sudo apt update && sudo apt install terraform -y
+
+
+
+
+
 
 
 # install aws cli
